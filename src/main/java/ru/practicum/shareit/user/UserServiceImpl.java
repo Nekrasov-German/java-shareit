@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        for(User userStorage : getUsers()) {
+        for (User userStorage : getUsers()) {
             if (user.getEmail().equals(userStorage.getEmail())) {
                 throw new ConflictException("Такой Email уже используется.");
             }
