@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface ItemRepository {
 
-    Item addItem(Item item);
+    ItemDto addItem(Item item);
 
-    Item updateItem(Item item);
+    ItemDto updateItem(Item item);
 
-    Item getItem(Long id);
+    ItemDto getItem(Long id);
 
     List<ItemDto> getItemForOwner(Long ownerId);
 

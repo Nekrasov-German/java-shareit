@@ -5,7 +5,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,26 +16,27 @@ public class InMemoryItemStorage implements ItemRepository {
     private final Map<Long, Item> itemsStorage = new HashMap<>();
 
     @Override
-    public Item updateItem(Item item) {
+    public ItemDto updateItem(Item item) {
         if (itemsStorage.containsKey(item.getId())) {
             Item updateItem = itemsStorage.get(item.getId());
-            return ItemMapper.updateFieldsItem(item, updateItem);
+
+            return ItemMapper.mapToItemDto(ItemMapper.updateFieldsItem(item, updateItem));
         } else {
             throw new NotFoundException("Такого товара не найдено");
         }
     }
 
     @Override
-    public Item addItem(Item item) {
+    public ItemDto addItem(Item item) {
         item.setId(getNextId.getAndIncrement());
         itemsStorage.put(item.getId(), item);
-        return item;
+        return ItemMapper.mapToItemDto(item);
     }
 
     @Override
-    public Item getItem(Long id) {
+    public ItemDto getItem(Long id) {
         if (itemsStorage.containsKey(id)) {
-            return itemsStorage.get(id);
+            return ItemMapper.mapToItemDto(itemsStorage.get(id));
         } else {
             throw new NotFoundException("Такого товара не найдено");
         }
@@ -44,28 +44,19 @@ public class InMemoryItemStorage implements ItemRepository {
 
     @Override
     public List<ItemDto> getItemForOwner(Long ownerId) {
-        List<ItemDto> result = new ArrayList<>();
-        for (Item item : itemsStorage.values()) {
-            if (item.getOwner().equals(ownerId)) {
-                result.add(ItemMapper.mapToItemDto(item));
-            }
-        }
-        return result;
+        return itemsStorage.values().stream()
+                .filter(item -> item.getOwner().equals(ownerId))
+                .map(ItemMapper::mapToItemDto)
+                .toList();
     }
 
     @Override
     public List<ItemDto> getAllItems(String text) {
-        List<ItemDto> result = new ArrayList<>();
-        for (Item item : itemsStorage.values()) {
-            if (item.getAvailable()) {
-                if (text.equalsIgnoreCase(item.getName())) {
-                    result.add(ItemMapper.mapToItemDto(item));
-                }
-                if (text.equalsIgnoreCase(item.getDescription())) {
-                    result.add(ItemMapper.mapToItemDto(item));
-                }
-            }
-        }
-        return result;
+        return itemsStorage.values().stream()
+                .filter(Item::getAvailable)
+                .filter(item -> text.equalsIgnoreCase(item.getName()) ||
+                        text.equalsIgnoreCase(item.getDescription()))
+                .map(ItemMapper::mapToItemDto)
+                .toList();
     }
 }

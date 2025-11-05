@@ -16,7 +16,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
-    public Item createItem(Long ownerId, ItemDto itemDto) {
+    public ItemDto createItem(Long ownerId, ItemDto itemDto) {
         if (userRepository.getUserForId(ownerId) == null) {
             throw new NotFoundException("Такого пользователя не существует");
         }
@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(Long id, Long ownerId, ItemDto itemDto) {
+    public ItemDto updateItem(Long id, Long ownerId, ItemDto itemDto) {
         if (userRepository.getUserForId(ownerId) == null) {
             throw new NotFoundException("Такого пользователя не существует");
         }
@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItem(Long id) {
+    public ItemDto getItem(Long id) {
         return itemRepository.getItem(id);
     }
 
