@@ -3,6 +3,8 @@ package ru.practicum.shareit.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -12,8 +14,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User createUser(User user) {
-        for (User userStorage : getUsers()) {
+    public UserDto createUser(User user) {
+        for (UserDto userStorage : getUsers()) {
             if (user.getEmail().equals(userStorage.getEmail())) {
                 throw new ConflictException("Такой Email уже используется.");
             }
@@ -22,9 +24,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
+    public UserDto updateUser(User user) {
         if (user.getEmail() != null) {
-            for (User userStorage : getUsers()) {
+            for (UserDto userStorage : getUsers()) {
                 if (user.getEmail().equals(userStorage.getEmail())) {
                     throw new ConflictException("Такой Email уже используется.");
                 }
@@ -34,12 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         return userRepository.getUsers();
     }
 
     @Override
-    public User getUserForId(Long userId) {
+    public UserDto getUserForId(Long userId) {
         return userRepository.getUserForId(userId);
     }
 
