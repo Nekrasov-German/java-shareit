@@ -19,10 +19,10 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     private Item item;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "booker", referencedColumnName = "id", nullable = false)
     private User booker;
     @Column(name = "start_booking")

@@ -1,8 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 @Data
 public class ItemWithComment {
@@ -10,7 +9,7 @@ public class ItemWithComment {
     private String name;
     private String description;
     private Boolean available;
-    private Booking lastBooking;
-    private Booking nextBooking;
-    private Comment comment;
+    private BookingDto lastBooking;
+    private BookingDto nextBooking;
+    private CommentDto comment;
 }
