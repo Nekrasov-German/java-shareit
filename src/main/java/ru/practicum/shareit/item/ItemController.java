@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Comment;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@PathVariable("itemId") Long itemId,
                                     @RequestHeader(HEADER_USER_ID) Long userId,
-                                    @Valid @RequestBody Comment comment) {
+                                    @Valid @RequestBody CommentRequest comment) {
         return itemService.createComment(itemId, userId, comment);
     }
 

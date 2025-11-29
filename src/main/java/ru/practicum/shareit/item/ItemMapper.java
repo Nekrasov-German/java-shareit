@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -45,6 +46,12 @@ public final class ItemMapper {
         commentDto.setAuthorName(comment.getUser().getName());
         commentDto.setCreated(comment.getCreated());
         return commentDto;
+    }
+
+    public Comment mapToComment(CommentRequest commentRequest) {
+        Comment comment = new Comment();
+        comment.setText(commentRequest.getText());
+        return comment;
     }
 
     public Item updateFieldsItem(Item item, Item updateItem) {

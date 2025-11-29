@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -34,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentDto createComment(Long itemId, Long userId, Comment comment) {
+    public CommentDto createComment(Long itemId, Long userId, CommentRequest commentRequest) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Такого товара не найдено"));
         User user = userRepository.findById(userId)
@@ -46,6 +47,7 @@ public class ItemServiceImpl implements ItemService {
         if (bookingItemId.isEmpty() || bookingItemId.get().getEnd().isAfter(LocalDateTime.now())) {
             throw new BadRequestException("Такого бронирования у пользователя не найдено.");
         }
+        Comment comment = ItemMapper.mapToComment(commentRequest);
         comment.setItem(item);
         comment.setUser(user);
         comment.setCreated(LocalDateTime.now());
