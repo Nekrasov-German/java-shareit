@@ -1,17 +1,19 @@
 package ru.practicum.shareit.booking;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 
 @RestController
 @RequestMapping("/bookings")
-@RequiredArgsConstructor
 public class BookingController {
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
     private final BookingClient bookingClient;
+
+    public BookingController(BookingClient bookingClient) {
+        this.bookingClient = bookingClient;
+    }
 
     @PostMapping
     public ResponseEntity<Object> createBooking(@RequestHeader(HEADER_USER_ID) Long owner,
