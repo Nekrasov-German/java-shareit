@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,25 +40,32 @@ public class BookingServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // Создаём владельца через new + сеттеры
         owner = new User();
         owner.setName("Owner");
         owner.setEmail("owner@test.com");
         owner = userRepository.save(owner);
 
-        // Создаём арендатора
         booker = new User();
         booker.setName("Booker");
         booker.setEmail("booker@test.com");
         booker = userRepository.save(booker);
 
-        // Создаём доступный товар
         item = new Item();
         item.setName("Item1");
         item.setDescription("Description1");
         item.setAvailable(true);
         item.setOwner(owner.getId());
         item = itemRepository.save(item);
+    }
+
+    private Booking createBooking(User booker, Item item, State state) {
+        Booking booking = new Booking();
+        booking.setItem(item);
+        booking.setBooker(booker);
+        booking.setStart(LocalDateTime.now().plusDays(1));
+        booking.setEnd(LocalDateTime.now().plusDays(2));
+        booking.setStatus(state);
+        return bookingRepository.save(booking);
     }
 
     @Test
@@ -96,7 +104,6 @@ public class BookingServiceImplTest {
         request.setItemId(999L);  // несуществующий item
         request.setStart(LocalDateTime.now().plusDays(1));
         request.setEnd(LocalDateTime.now().plusDays(2));
-
 
         assertThatThrownBy(() -> bookingService.create(booker.getId(), request))
                 .isInstanceOf(NotFoundException.class)
@@ -153,5 +160,86 @@ public class BookingServiceImplTest {
         assertThatThrownBy(() -> bookingService.update(owner.getId(), 999L, true))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Такой брони не существует.");
+    }
+
+    @Test
+    void getAll_filteredByState_success() {
+        Booking b1 = createBooking(booker, item, State.APPROVED);
+        createBooking(booker, item, State.REJECTED); // не должен попасть
+
+        List<BookingDto> result = bookingService.getAll(State.APPROVED, booker.getId());
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(b1.getId());
+        assertThat(result.get(0).getStatus()).isEqualTo(State.APPROVED);
+    }
+
+    @Test
+    void getAll_allState_success() {
+        Booking b1 = createBooking(booker, item, State.WAITING);
+        Booking b2 = createBooking(booker, item, State.APPROVED);
+        Booking b3 = createBooking(booker, item, State.REJECTED);
+
+        List<BookingDto> result = bookingService.getAll(State.ALL, booker.getId());
+
+        assertThat(result).hasSize(3);
+        assertThat(result)
+                .extracting("id")
+                .containsExactlyInAnyOrder(b1.getId(), b2.getId(), b3.getId());
+    }
+
+    @Test
+    void getAll_userNotFound() {
+        assertThatThrownBy(() -> bookingService.getAll(State.ALL, 999L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Такой пользователь не найден.");
+    }
+
+    @Test
+    void getOwnerOrBookerBooking_ownerAccess_success() {
+        Booking booking = createBooking(booker, item, State.WAITING);
+
+        BookingDto result = bookingService.getOwnerOrBookerBooking(booking.getId(), owner.getId());
+
+        assertThat(result.getId()).isEqualTo(booking.getId());
+        assertThat(result.getItem().getId()).isEqualTo(item.getId());
+    }
+
+    @Test
+    void getOwnerOrBookerBooking_bookerAccess_success() {
+        Booking booking = createBooking(booker, item, State.WAITING);
+
+        BookingDto result = bookingService.getOwnerOrBookerBooking(booking.getId(), booker.getId());
+
+        assertThat(result.getId()).isEqualTo(booking.getId());
+    }
+
+    @Test
+    void getOwnerOrBookerBooking_unauthorizedUser() {
+        User unauthorized = new User();
+        unauthorized.setName("Unauthorized");
+        unauthorized.setEmail("unauth@test.com");
+        unauthorized = userRepository.save(unauthorized);
+
+        Booking booking = createBooking(booker, item, State.WAITING);
+
+        User finalUnauthorized = unauthorized;
+        assertThatThrownBy(() ->
+                bookingService.getOwnerOrBookerBooking(booking.getId(), finalUnauthorized.getId()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Данный пользователь не является владельцем.");
+    }
+
+    @Test
+    void getAllByOwner_allState_success() {
+        Booking b1 = createBooking(booker, item, State.WAITING);
+        Booking b2 = createBooking(booker, item, State.APPROVED);
+
+        List<BookingDto> result = bookingService.getAllByOwner(State.ALL, owner.getId());
+
+        assertThat(result).hasSize(2);
+        assertThat(result)
+                .extracting("id")
+                .containsExactlyInAnyOrder(b1.getId(), b2.getId());
     }
 }
