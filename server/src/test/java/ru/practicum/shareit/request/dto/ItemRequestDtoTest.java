@@ -2,11 +2,12 @@ package ru.practicum.shareit.request.dto;
 
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ItemRequestDtoTest {
@@ -23,7 +24,7 @@ class ItemRequestDtoTest {
 
         List<ItemDto> items = Arrays.asList(item1, item2);
 
-        User user = new User();
+        UserDto user = new UserDto();
         user.setId(100L);
 
         ItemRequestDto dto = new ItemRequestDto();

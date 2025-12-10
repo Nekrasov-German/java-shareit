@@ -4,11 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUserForId(@PathVariable("userId") Long userId) {
-        userClient.deleteUser(userId);
+    public ResponseEntity<Object> deleteUserForId(@PathVariable("userId") Long userId) {
+        return userClient.deleteUser(userId);
     }
 }

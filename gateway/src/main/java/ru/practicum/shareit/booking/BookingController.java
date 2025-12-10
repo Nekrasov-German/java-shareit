@@ -3,10 +3,11 @@ package ru.practicum.shareit.booking;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
 public class BookingController {

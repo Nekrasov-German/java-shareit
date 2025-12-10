@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequest;
@@ -15,33 +16,33 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDto createBooking(@RequestHeader(HEADER_USER_ID) Long owner,
-                                    @RequestBody BookingRequest booking) {
-        return bookingService.create(owner, booking);
+    public ResponseEntity<BookingDto> createBooking(@RequestHeader(HEADER_USER_ID) Long owner,
+                                                   @RequestBody BookingRequest booking) {
+        return ResponseEntity.ok().body(bookingService.create(owner, booking));
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto updateItem(@RequestParam ("approved") Boolean approved,
+    public ResponseEntity<BookingDto> updateItem(@RequestParam ("approved") Boolean approved,
                                  @RequestHeader(HEADER_USER_ID) Long owner,
                                  @PathVariable("bookingId") Long bookingId) {
-        return bookingService.update(owner, bookingId, approved);
+        return ResponseEntity.ok().body(bookingService.update(owner, bookingId, approved));
     }
 
     @GetMapping
-    public List<BookingDto> getAllBooking(@RequestParam(defaultValue = "ALL") State state,
+    public ResponseEntity<List<BookingDto>> getAllBooking(@RequestParam(defaultValue = "ALL") State state,
                                           @RequestHeader(HEADER_USER_ID) Long userId) {
-        return bookingService.getAll(state, userId);
+        return ResponseEntity.ok().body(bookingService.getAll(state, userId));
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDto getOwnerBooking(@PathVariable("bookingId") Long bookingId,
+    public ResponseEntity<BookingDto> getOwnerBooking(@PathVariable("bookingId") Long bookingId,
                                             @RequestHeader(HEADER_USER_ID) Long userId) {
-        return bookingService.getOwnerOrBookerBooking(bookingId, userId);
+        return ResponseEntity.ok().body(bookingService.getOwnerOrBookerBooking(bookingId, userId));
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getAllBookingByOwner(@RequestParam(defaultValue = "ALL") State state,
+    public ResponseEntity<List<BookingDto>> getAllBookingByOwner(@RequestParam(defaultValue = "ALL") State state,
                                           @RequestHeader(HEADER_USER_ID) Long ownerId) {
-        return bookingService.getAllByOwner(state, ownerId);
+        return ResponseEntity.ok().body(bookingService.getAllByOwner(state, ownerId));
     }
 }

@@ -2,6 +2,8 @@ package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,8 @@ class ItemRequestMapperTest {
         user.setName("User1");
         user.setEmail("user1@test.com");
 
+        UserDto userDto = UserMapper.mapToUserDto(user);
+
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(100L);
         itemRequest.setDescription("Нужно купить лампу");
@@ -28,7 +32,7 @@ class ItemRequestMapperTest {
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(100L);
         assertThat(dto.getDescription()).isEqualTo("Нужно купить лампу");
-        assertThat(dto.getUserId()).isEqualTo(user);
+        assertThat(dto.getUserId()).isEqualTo(userDto);
         assertThat(dto.getCreated())
                 .isEqualTo(LocalDateTime.of(2025, 12, 7, 10, 0));
     }

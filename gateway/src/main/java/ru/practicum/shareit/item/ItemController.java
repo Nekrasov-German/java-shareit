@@ -3,11 +3,12 @@ package ru.practicum.shareit.item;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
@@ -40,12 +41,12 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItemsOwner(@RequestHeader("X-Sharer-User-Id") Long owner) {
+    public ResponseEntity<Object> getItemsOwner(@RequestHeader(HEADER_USER_ID) Long owner) {
         return itemClient.getItemsOwner(owner);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> getItemsForText(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> getItemsForText(@RequestHeader(HEADER_USER_ID) Long userId,
                                                   @RequestParam("text") String text) {
         return itemClient.getItemForText(userId, text);
     }

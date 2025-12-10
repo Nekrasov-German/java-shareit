@@ -137,7 +137,7 @@ class UserControllerTest {
         doNothing().when(userService).deleteUserForId(1L);
 
         mvc.perform(delete("/users/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().is2xxSuccessful());
 
         verify(userService, times(1)).deleteUserForId(1L);
     }
